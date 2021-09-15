@@ -8,45 +8,56 @@ app.use(cors());
 app.use(express.json());
 
 
-app.get('/matricula', async (req, resp) => {
+app.get('/produto', async (req, resp) => {
     try{ 
-        let r = await db.tb_matricula.findAll({ order: [['id_matricula', 'desc']] })
+        let r = await db.tb_produto.findAll({ order: [['id_produto', 'desc']] })
         resp.send(r)
     } catch (e) {
         resp.send({ erro: e.toString() })
     }
 })
 
-app.post('/matricula', async (req, resp) => {
+app.post('/produto', async (req, resp) => {
     try{ 
-        let { nome, chamada, curso, turma } = req.body;
+        let { nome, categoria, precoDE, precoPOR, avaliacao, descricao, estoque, linkIMG } = req.body;
         
-        let r = await db.tb_matricula.create({
-            nm_aluno: nome,
-            nr_chamada: chamada,
-            nm_curso: curso,
-            nm_turma: turma
+        let r = await db.tb_produto.create({
+            nm_produto: nome,
+            ds_categoria: categoria,
+            vl_preco_de: precoDE,
+            vl_preco_por: precoPOR,
+            vl_avaliacao: avaliacao,
+            ds_produto: descricao,
+            qtd_estoque: estoque,
+            img_produto: linkIMG
         })
-
+        let produtoexistente = await db.tb_produto.findOne({ where: { nm_produto: nome } })
+        if(produtoexistente != null)
+            return resp.send('Produto já existe no sistema')
+        
         resp.send(r)
     } catch (e) {
         resp.send({ erro: e.toString() })
     }
 })
 
-app.put('/matricula/:id', async (req, resp) => {
+app.put('/produto/:id', async (req, resp) => {
     try{ 
-        let { nome, chamada, curso, turma } = req.body;
+        let { nome, categoria, precoDE, precoPOR, avaliacao, descricao, estoque, linkIMG } = req.body;
         let { id } = req.params;
     
-        let r = await db.tb_matricula.update({
+        let r = await db.tb_produto.update({
             nm_aluno: nome,
-            nr_chamada: chamada,
-            nm_curso: curso,
-            nm_turma: turma
+            ds_categoria: categoria,
+            vl_preco_de: precoDE,
+            vl_preco_por: precoPOR,
+            vl_avaliacao: avaliacao,
+            ds_produto: descricao,
+            qtd_estoque: estoque,
+            img_produto: linkIMG
         },
         {
-            where: { id_matricula: id }
+            where: { id_produto: id }
         })
 
         resp.sendStatus(200) 
@@ -55,11 +66,11 @@ app.put('/matricula/:id', async (req, resp) => {
     }
 })
 
-app.delete('/matricula/:id', async (req, resp) => {
+app.delete('/produto/:id', async (req, resp) => {
     try{ 
         let { id } = req.params;
         
-        let r = await db.tb_matricula.destroy({ where: { id_matricula: id } })
+        let r = await db.tb_produto.destroy({ where: { id_produto: id } })
         resp.sendStatus(200)
     } catch (e) {
         resp.send({ erro: e.toString() })
