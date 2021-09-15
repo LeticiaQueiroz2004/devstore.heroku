@@ -21,6 +21,10 @@ app.post('/produto', async (req, resp) => {
     try{ 
         let { nome, categoria, precoDE, precoPOR, avaliacao, descricao, estoque, linkIMG } = req.body;
         
+        let produtoexistente = await db.tb_produto.findOne({ where: { nm_produto: nome } })
+        if(produtoexistente != null)
+            return resp.send({ erro: 'Produto já existe no sistema' })
+
         let r = await db.tb_produto.create({
             nm_produto: nome,
             ds_categoria: categoria,
@@ -31,10 +35,9 @@ app.post('/produto', async (req, resp) => {
             qtd_estoque: estoque,
             img_produto: linkIMG
         })
-        let produtoexistente = await db.tb_produto.findOne({ where: { nm_produto: nome } })
-        if(produtoexistente != null)
-            return resp.send('Produto já existe no sistema')
         
+        
+     
         resp.send(r)
     } catch (e) {
         resp.send({ erro: e.toString() })
