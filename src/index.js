@@ -50,7 +50,7 @@ app.put('/produto/:id', async (req, resp) => {
         let { id } = req.params;
     
         let r = await db.tb_produto.update({
-            nm_aluno: nome,
+            nm_produto: nome,
             ds_categoria: categoria,
             vl_preco_de: precoDE,
             vl_preco_por: precoPOR,
